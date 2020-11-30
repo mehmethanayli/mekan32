@@ -5,7 +5,7 @@ var router = express.Router();
 const anaSayfa = function(req, res, next) {
     res.render('mekanlar-liste', {
         'baslik': 'Mekan32 | Anasayfa',
-        'footer': 'Mehmet Can Hanaylı',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
         'sayfaBaslik': {
             'siteAd': 'Mekan 32',
             'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
@@ -16,6 +16,34 @@ const anaSayfa = function(req, res, next) {
                 'puan': 3,
                 'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
                 'mesafe': '1km'
+            },
+            {
+                'ad': 'Kahve Deryası',
+                'adres': 'Optimum AVM',
+                'puan': 5,
+                'imkanlar': ['Kahve', 'Kekler', 'Pastalar', 'Çay'],
+                'mesafe': '1.3km'
+            },
+            {
+                'ad': 'Kahve Diyarı',
+                'adres': 'Optimum Bornova Avm',
+                'puan': 5,
+                'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
+                'mesafe': '1km'
+            },
+            {
+                'ad': 'Kahve Sokağı',
+                'adres': 'Forum İzmir Avm',
+                'puan': 2,
+                'imkanlar': ['Dünya Kahveleri', 'Filtre Kahveler', 'Yöresel Kahveler'],
+                'mesafe': '10km'
+            },
+            {
+                'ad': 'Kazak Kahvesi',
+                'adres': 'Ispaş Avm',
+                'puan': 3,
+                'imkanlar': ['Türk Kahvesi Çeşitleri', 'Kazak Kahve Çeşitleri', 'Kuru Pastalar'],
+                'mesafe': '0,9km'
             },
             {
                 'ad': 'Gloria',
@@ -56,11 +84,18 @@ const mekanBilgisi = function(req, res, next) {
                 'kapali': true
             }],
             'yorumlar': [{
-                'yorumYapan': 'Mehmet Can Hanaylı',
-                'puan': 3,
-                'tarih': '27.11.2020',
-                'yorumMetni': 'Kahveler lezzetli.'
-            }]
+                    'yorumYapan': 'Mehmet Can Hanaylı',
+                    'puan': 3,
+                    'tarih': '27.11.2020',
+                    'yorumMetni': 'Kahveler lezzetli.'
+                },
+                {
+                    'yorumYapan': 'Arif Kursavar',
+                    'puan': 4,
+                    'tarih': '27.12.2021',
+                    'yorumMetni': 'Hizmet kalitesi seviyesi iyi, pastalar çok güzel...'
+                }
+            ]
         }
     });
 }
@@ -69,37 +104,11 @@ const yorumEkle = function(req, res, next) {
     res.render('yorum-ekle', { title: 'Yorum Ekle' });
 }
 
-//Mekanlar için Eklenen
-const kahveDeryasi = function(req, res, next) {
-    res.render('mekan-kahveDeryasi', { title: 'Kahve Deryası' });
-}
-
-const kahveDeresi = function(req, res, next) {
-    res.render('mekan-kahveDeresi', { title: ' Kahve Deresi' });
-}
-
-const kahveDiyari = function(req, res, next) {
-    res.render('mekan-kahveDiyari', { title: 'Kahve Diyarı' });
-}
-
-const kahveDunyasi = function(req, res, next) {
-    res.render('mekan-kahveDunyasi', { title: 'Kahve Dünyası' });
-}
-
-const kazakKahvesi = function(req, res, next) {
-    res.render('mekan-kazakKahvesi', { title: 'Kazak Kahvesi' })
-}
-
 
 module.exports = {
     anaSayfa,
     mekanBilgisi,
-    yorumEkle,
-    kahveDeryasi,
-    kahveDeresi,
-    kahveDiyari,
-    kahveDunyasi,
-    kazakKahvesi
+    yorumEkle
 }
 
 module.exports.admin = function(req, res, next) {
