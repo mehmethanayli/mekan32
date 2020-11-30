@@ -3,9 +3,30 @@ var router = express.Router();
 
 /* GET home page. */
 const anaSayfa = function(req, res, next) {
-    res.render('mekanlar-liste', { title: 'Anasayfa' });
+    res.render('mekanlar-liste', {
+        'baslik': 'Mekan32 | Anasayfa',
+        'footer': 'Mehmet Can Hanaylı',
+        'sayfaBaslik': {
+            'siteAd': 'Mekan 32',
+            'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
+        },
+        'mekanlar': [{
+                'ad': 'Starbucks',
+                'adres': 'Centrum Garden Avm',
+                'puan': 3,
+                'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
+                'mesafe': '1km'
+            },
+            {
+                'ad': 'Gloria',
+                'adres': 'SDU Doğu Kampüs Avm',
+                'puan': 2,
+                'imkanlar': ['Kahve', 'Çay', 'Pastalar'],
+                'mesafe': '1km'
+            }
+        ]
+    });
 }
-
 
 const mekanBilgisi = function(req, res, next) {
     res.render('mekan-detay', { title: 'Mekan Bilgisi' });
