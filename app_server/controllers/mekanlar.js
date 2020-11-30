@@ -29,7 +29,40 @@ const anaSayfa = function(req, res, next) {
 }
 
 const mekanBilgisi = function(req, res, next) {
-    res.render('mekan-detay', { title: 'Mekan Bilgisi' });
+    res.render('mekan-detay', {
+        'baslik': 'Mekan Bilgisi',
+        'sayfaBaslik': 'Starbucks',
+        'mekanBilgisi': {
+            'ad': 'Starbucks',
+            'adres': 'Centrum Garden Avm',
+            'puan': 3,
+            'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
+            'koordinatlar': {
+                'enlem': '37.781885',
+                'boylam': '30.566034'
+            },
+            'saatler': [{
+                'gunler': 'Pazartesi-Cuma',
+                'acilis': '07:00',
+                'kapanis': '23:00',
+                'kapali': false
+            }, {
+                'gunler': 'Cumartesi',
+                'acilis': '09:00',
+                'kapanis': '22:00',
+                'kapali': false
+            }, {
+                'gunler': 'Pazar',
+                'kapali': true
+            }],
+            'yorumlar': [{
+                'yorumYapan': 'Mehmet Can Hanaylı',
+                'puan': 3,
+                'tarih': '27.11.2020',
+                'yorumMetni': 'Kahveler lezzetli.'
+            }]
+        }
+    });
 }
 
 const yorumEkle = function(req, res, next) {
