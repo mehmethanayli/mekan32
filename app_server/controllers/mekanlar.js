@@ -59,6 +59,7 @@ const anaSayfa = function(req, res, next) {
 const mekanBilgisi = function(req, res, next) {
     res.render('mekan-detay', {
         'baslik': 'Mekan Bilgisi',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
         'sayfaBaslik': 'Starbucks',
         'mekanBilgisi': {
             'ad': 'Starbucks',
@@ -101,7 +102,10 @@ const mekanBilgisi = function(req, res, next) {
 }
 
 const yorumEkle = function(req, res, next) {
-    res.render('yorum-ekle', { title: 'Yorum Ekle' });
+    res.render('yorum-ekle', {
+        title: 'Yorum Ekle',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
+    });
 }
 
 
