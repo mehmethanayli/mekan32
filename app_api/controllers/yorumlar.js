@@ -173,7 +173,42 @@ const yorumGuncelle = function(req, res) {
 }
 
 const yorumSil = function(req, res) {
-    cevapOlustur(res, 200, { "Yorum Sil Durum": "basarili" });
+    if (!req.params.mekanid || !req.params.yorumid) {
+        cevapOlustur(res, 404, { "mesaj": "Bulunamadı. mekanid ve yorumid gereklidir." });
+        return;
+    }
+    Mekan
+        .findById(req.params.mekanid)
+        .select('yorumlar')
+        .exec(
+            function(hata, gelenMekan) {
+                if (!gelenMekan) {
+                    cevapOlustur(res, 404, { "mesaj": "mekanid bulunamadı." });
+                    return;
+                } else if (hata) {
+                    cevapOlustur(res, 400, hata);
+                    return;
+                }
+                if (gelenMekan.yorumlar && gelenMekan.yorumlar.length > 0) {
+                    if (!gelenMekan.yorumlar.id(req.params.yorumid)) {
+                        cevapOlustur(res, 404, { "mesaj": "yorumid bulunamadı." });
+                    } else {
+                        gelenMekan.yorumlar.id(req.params.yorumid).remove();
+                        gelenMekan.save(function(hata, mekan) {
+                            if (hata) {
+                                cevapOlustur(res, 404, hata);
+                                return;
+                            } else {
+                                ortalamaPuanGuncelle(mekan._id);
+                                cevapOlustur(res, 204, null);
+                            }
+                        });
+                    }
+                } else {
+                    cevapOlustur(res, 404, { "mesaj": "silinecek yorum bulunamadı." });
+                }
+            }
+        );
 }
 
 module.exports = {
