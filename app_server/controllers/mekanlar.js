@@ -1,8 +1,41 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-const anaSayfa = function(req, res, next) {
+var request = require('postman-request');
+
+var apiSecenekleri = {
+    sunucu: "http://localhost:3000/",
+    apiYolu: 'api/mekanlar/'
+}
+
+var istekSecenekleri;
+
+var footer = 'Mehmet Hanaylı - Web Programlama 2020 ';
+
+/* Mesafe Formatlama İşlemi Yapılır. */
+var mesafeyiFormatla = function(mesafe) {
+    var yeniMesafe, birim;
+    if (mesafe > 1000) {
+        yeniMesafe = parseFloat(mesafe / 1000).toFixed(2);
+        birim = "km";
+    } else {
+        yeniMesafe = parseFloat(mesafe).toFixed(1);
+        birim = "m";
+    }
+    return yeniMesafe + birim;
+}
+
+/* Anasayfayı oluşturan metot. */
+var anaSayfaOlustur = function(req, res, cevap, mekanListesi) {
+    var mesaj;
+    if (!(mekanListesi instanceof Array)) {
+        mesaj = "Apı Hatası: Birşeyler Ters Gitti";
+        mekanListesi = [];
+    } else {
+        if (!mekanListesi.length) {
+            mesaj = "Civarda herhangi bir mekan bulunamadı."
+        }
+    }
     res.render('mekanlar-liste', {
         'baslik': 'Mekan32 | Anasayfa',
         'footer': 'Mehmet Hanaylı - Web Programlama 2020',
@@ -10,53 +43,100 @@ const anaSayfa = function(req, res, next) {
             'siteAd': 'Mekan 32',
             'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
         },
-        'mekanlar': [{
-                'ad': 'Starbucks',
-                'adres': 'Centrum Garden Avm',
-                'puan': 3,
-                'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
-                'mesafe': '1km'
-            },
-            {
-                'ad': 'Kahve Deryası',
-                'adres': 'Optimum AVM',
-                'puan': 5,
-                'imkanlar': ['Kahve', 'Kekler', 'Pastalar', 'Çay'],
-                'mesafe': '1.3km'
-            },
-            {
-                'ad': 'Kahve Diyarı',
-                'adres': 'Optimum Bornova Avm',
-                'puan': 5,
-                'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
-                'mesafe': '1km'
-            },
-            {
-                'ad': 'Kahve Sokağı',
-                'adres': 'Forum İzmir Avm',
-                'puan': 2,
-                'imkanlar': ['Dünya Kahveleri', 'Filtre Kahveler', 'Yöresel Kahveler'],
-                'mesafe': '10km'
-            },
-            {
-                'ad': 'Kazak Kahvesi',
-                'adres': 'Ispaş Avm',
-                'puan': 3,
-                'imkanlar': ['Türk Kahvesi Çeşitleri', 'Kazak Kahve Çeşitleri', 'Kuru Pastalar'],
-                'mesafe': '0,9km'
-            },
-            {
-                'ad': 'Gloria',
-                'adres': 'SDU Doğu Kampüs Avm',
-                'puan': 2,
-                'imkanlar': ['Kahve', 'Çay', 'Pastalar'],
-                'mesafe': '1km'
+        'mekanlar': mekanListesi,
+        mesaj: mesaj,
+        cevap: cevap,
+    });
+
+}
+
+/* Yeni Oluşturulan Metot Api İle Bağlantılı */
+const anaSayfa = function(req, res) {
+    istekSecenekleri = {
+        url: apiSecenekleri.sunucu + apiSecenekleri.apiYolu,
+        method: "GET",
+        json: {},
+        qs: {
+            enlem: req.query.enlem,
+            boylam: req.query.boylam
+        }
+    };
+    request(istekSecenekleri, function(hata, cevap, mekanlar) {
+        var i, gelenMekanlar;
+        gelenMekanlar = mekanlar;
+        if (!hata && gelenMekanlar.length) {
+            for (i = 0; i < gelenMekanlar.length; i++) {
+                gelenMekanlar[i].mesafe = mesafeyiFormatla(gelenMekanlar[i].mesafe);
             }
-        ]
+        }
+        anaSayfaOlustur(req, res, cevap, gelenMekanlar);
     });
 }
 
-const mekanBilgisi = function(req, res, next) {
+/* Yeni Oluşturulan Metot Api İle Bağlantılı */
+var detaySayfasiOlustur = function(req, res, mekanDetaylari) {
+    res.render('mekan-detay', {
+        baslik: mekanDetaylari.ad,
+        footer: footer,
+        sayfaBaslik: mekanDetaylari.ad,
+        mekanBilgisi: mekanDetaylari
+    });
+}
+
+var hataGoster = function(req, res, durum) {
+    var baslik, icerik;
+    if (durum == 404) {
+        baslik = "404, Sayfa Bulunamadı";
+        icerik = "Sayfayı Bulamadık";
+    } else {
+        baslik = durum + " , Birşeyler ters gitti.";
+        icerik = "Ters giden birşeyler var";
+    }
+    res.status(durum);
+    res.render('hata', {
+        baslik: baslik,
+        icerik: icerik
+    });
+}
+
+
+
+/* GET home page. */
+/* const anaSayfa = function(req, res, next) {
+    res.render('mekanlar-liste', {
+        'baslik': 'Mekan32 | Anasayfa',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
+        'sayfaBaslik': {
+            'siteAd': 'Mekan 32',
+            'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
+        },
+        'mekanlar': mekanListesi,
+        mesaj:mesaj,
+        cevap:cevap,
+    });
+} */
+
+var mekanBilgisi = function(req, res, callback) {
+    istekSecenekleri = {
+        url: apiSecenekleri.sunucu + apiSecenekleri.apiYolu + req.params.mekanid,
+        method: "GET",
+        json: {}
+    };
+    request(istekSecenekleri, function(hata, cevap, mekanDetaylari) {
+        var gelenMekan = mekanDetaylari;
+        if (cevap.statusCode == 200) {
+            gelenMekan.koordinatlar = {
+                enlem: mekanDetaylari.koordinatlar[0],
+                boylam: mekanDetaylari.koordinatlar[1]
+            };
+            detaySayfasiOlustur(req, res, gelenMekan);
+        } else {
+            hataGoster(req, res, cevap.statusCode);
+        }
+    });
+}
+
+/* const mekanBilgisi = function(req, res, next) {
     res.render('mekan-detay', {
         'baslik': 'Mekan Bilgisi',
         'footer': 'Mehmet Hanaylı - Web Programlama 2020',
@@ -99,7 +179,7 @@ const mekanBilgisi = function(req, res, next) {
             ]
         }
     });
-}
+} */
 
 const yorumEkle = function(req, res, next) {
     res.render('yorum-ekle', {

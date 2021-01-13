@@ -17,6 +17,7 @@
         "mongo": "^0.1.0",
         "mongoose": "^5.11.7",
         "morgan": "~1.9.1",
+        "postman-request": "^2.88.1-postman.28",
         "pug": "2.0.0-beta11"
     }
 }
