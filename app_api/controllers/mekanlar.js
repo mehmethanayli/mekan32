@@ -21,7 +21,7 @@ const mekanlariListele = async(req, res) => {
         distanceField: "mesafe",
         spherical: true,
         key: "koordinatlar",
-        /* maxDistance: 20000 */
+        maxDistance: 20000
     };
 
     if (!enlem || !boylam) {

@@ -26,7 +26,7 @@ var mesafeyiFormatla = function(mesafe) {
     var yeniMesafe, birim;
     if (mesafe > 1000) {
         yeniMesafe = parseFloat(mesafe / 1000).toFixed(2);
-        birim = "km";
+        birim = " km";
     } else {
         yeniMesafe = parseFloat(mesafe).toFixed(1);
         birim = "m";
@@ -42,7 +42,7 @@ var anaSayfaOlustur = function(req, res, cevap, mekanListesi) {
         mekanListesi = [];
     } else {
         if (!mekanListesi.length) {
-            mesaj = "Civarda herhangi bir mekan bulunamadı."
+            mesaj = "Civarda (20km Mesafede) herhangi bir mekan bulunamadı.Örnek Mekanlar İçin: ?enlem=37.781885&boylam=30.504944"
         }
     }
     res.render('mekanlar-liste', {
