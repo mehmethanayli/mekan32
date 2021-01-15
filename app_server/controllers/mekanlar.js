@@ -3,6 +3,7 @@ var router = express.Router();
 
 var request = require('postman-request');
 
+
 var apiSecenekleri = {
     sunucu: "https://mehmetcanhanayli1940138016.herokuapp.com/",
     apiYolu: 'api/mekanlar/'
@@ -170,6 +171,17 @@ var mekanBilgisi = function(req, res, callback) {
     });
 }
 
+var yorumSayfasiOlustur = function(req, res, mekanBilgisi) {
+    res.render('yorum-ekle', {
+        baslik: mekanBilgisi.ad + ' Mekanına Yorum Ekle',
+        sayfaBaslik: mekanBilgisi.ad + ' Mekanına Yorum Ekle',
+        footer: footer,
+        hata: req.query.hata
+    });
+}
+
+
+
 /* Statik Mekan Bilgisi: */
 /* const mekanBilgisi = function(req, res, next) {
     res.render('mekan-detay', {
@@ -217,10 +229,9 @@ var mekanBilgisi = function(req, res, callback) {
 } */
 
 const yorumEkle = function(req, res) {
-    res.render('yorum-ekle', {
-        title: 'Yorum Ekle',
-        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
-    });
+    mekanBilgisiGetir(req, res, function(req, res, cevap) {
+        yorumSayfasiOlustur(req, res, cevap);
+    })
 }
 
 const yorumumuEkle = function(req, res) {
