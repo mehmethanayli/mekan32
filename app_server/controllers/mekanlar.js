@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
 var request = require('postman-request');
 
 
@@ -9,17 +8,32 @@ var apiSecenekleri = {
     apiYolu: 'api/mekanlar/'
 }
 
+
 /* Local Test: */
 /* var apiSecenekleri = {
     sunucu: "http://localhost:3000/",
     apiYolu: 'api/mekanlar/'
 } */
 
-
-
 var istekSecenekleri;
-
 var footer = 'Mehmet Hanaylı - Web Programlama 2020 ';
+
+/* Hata gösteren metot. */
+var hataGoster = function(req, res, durum) {
+    var baslik, icerik;
+    if (durum == 404) {
+        baslik = "404, Sayfa Bulunamadı";
+        icerik = "Sayfayı Bulamadık";
+    } else {
+        baslik = durum + " , Birşeyler ters gitti.";
+        icerik = "Ters giden birşeyler var";
+    }
+    res.status(durum);
+    res.render('hata', {
+        baslik: baslik,
+        icerik: icerik
+    });
+}
 
 /* Mesafe Formatlama İşlemi Yapılır. */
 var mesafeyiFormatla = function(mesafe) {
@@ -59,7 +73,7 @@ var anaSayfaOlustur = function(req, res, cevap, mekanListesi) {
 
 }
 
-/* Yeni Oluşturulan Metot Api İle Bağlantılı */
+/* Metot Api İle Bağlantılı */
 const anaSayfa = function(req, res) {
     istekSecenekleri = {
         url: apiSecenekleri.sunucu + apiSecenekleri.apiYolu,
@@ -82,7 +96,7 @@ const anaSayfa = function(req, res) {
     });
 }
 
-/* Yeni Oluşturulan Metot Api İle Bağlantılı */
+/* Metot Api İle Bağlantılı */
 var detaySayfasiOlustur = function(req, res, mekanDetaylari) {
     res.render('mekan-detay', {
         baslik: mekanDetaylari.ad,
@@ -91,39 +105,6 @@ var detaySayfasiOlustur = function(req, res, mekanDetaylari) {
         mekanBilgisi: mekanDetaylari
     });
 }
-
-var hataGoster = function(req, res, durum) {
-    var baslik, icerik;
-    if (durum == 404) {
-        baslik = "404, Sayfa Bulunamadı";
-        icerik = "Sayfayı Bulamadık";
-    } else {
-        baslik = durum + " , Birşeyler ters gitti.";
-        icerik = "Ters giden birşeyler var";
-    }
-    res.status(durum);
-    res.render('hata', {
-        baslik: baslik,
-        icerik: icerik
-    });
-}
-
-
-
-/* GET home page. */
-/* const anaSayfa = function(req, res, next) {
-    res.render('mekanlar-liste', {
-        'baslik': 'Mekan32 | Anasayfa',
-        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
-        'sayfaBaslik': {
-            'siteAd': 'Mekan 32',
-            'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
-        },
-        'mekanlar': mekanListesi,
-        mesaj:mesaj,
-        cevap:cevap,
-    });
-} */
 
 var mekanBilgisiGetir = function(req, res, callback) {
     var istekSecenekleri;
@@ -136,7 +117,7 @@ var mekanBilgisiGetir = function(req, res, callback) {
         istekSecenekleri,
         function(hata, cevap, mekanDetaylari) {
             var gelenMekan = mekanDetaylari;
-            if (!hata) {
+            if (cevap.statusCode == 200) {
                 gelenMekan.koordinatlar = {
                     enlem: mekanDetaylari.koordinatlar[0],
                     boylam: mekanDetaylari.koordinatlar[1]
@@ -148,8 +129,6 @@ var mekanBilgisiGetir = function(req, res, callback) {
         }
     );
 }
-
-
 
 var mekanBilgisi = function(req, res, callback) {
     istekSecenekleri = {
@@ -179,54 +158,6 @@ var yorumSayfasiOlustur = function(req, res, mekanBilgisi) {
         hata: req.query.hata
     });
 }
-
-
-
-/* Statik Mekan Bilgisi: */
-/* const mekanBilgisi = function(req, res, next) {
-    res.render('mekan-detay', {
-        'baslik': 'Mekan Bilgisi',
-        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
-        'sayfaBaslik': 'Starbucks',
-        'mekanBilgisi': {
-            'ad': 'Starbucks',
-            'adres': 'Centrum Garden Avm',
-            'puan': 3,
-            'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
-            'koordinatlar': {
-                'enlem': '37.781885',
-                'boylam': '30.566034'
-            },
-            'saatler': [{
-                'gunler': 'Pazartesi-Cuma',
-                'acilis': '07:00',
-                'kapanis': '23:00',
-                'kapali': false
-            }, {
-                'gunler': 'Cumartesi',
-                'acilis': '09:00',
-                'kapanis': '22:00',
-                'kapali': false
-            }, {
-                'gunler': 'Pazar',
-                'kapali': true
-            }],
-            'yorumlar': [{
-                    'yorumYapan': 'Mehmet Can Hanaylı',
-                    'puan': 3,
-                    'tarih': '27.11.2020',
-                    'yorumMetni': 'Kahveler lezzetli.'
-                },
-                {
-                    'yorumYapan': 'Arif Kursavar',
-                    'puan': 4,
-                    'tarih': '27.12.2021',
-                    'yorumMetni': 'Hizmet kalitesi seviyesi iyi, pastalar çok güzel...'
-                }
-            ]
-        }
-    });
-} */
 
 const yorumEkle = function(req, res) {
     mekanBilgisiGetir(req, res, function(req, res, cevap) {
@@ -272,6 +203,68 @@ module.exports = {
     yorumEkle,
     yorumumuEkle
 }
+
+
+/* Statik Ana Sayfa Örnekler: */
+/* const anaSayfa = function(req, res, next) {
+    res.render('mekanlar-liste', {
+        'baslik': 'Mekan32 | Anasayfa',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
+        'sayfaBaslik': {
+            'siteAd': 'Mekan 32',
+            'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
+        },
+        'mekanlar': mekanListesi,
+        mesaj:mesaj,
+        cevap:cevap,
+    });
+} */
+
+/* Statik Mekan Bilgisi Örnek: */
+/* const mekanBilgisi = function(req, res, next) {
+    res.render('mekan-detay', {
+        'baslik': 'Mekan Bilgisi',
+        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
+        'sayfaBaslik': 'Starbucks',
+        'mekanBilgisi': {
+            'ad': 'Starbucks',
+            'adres': 'Centrum Garden Avm',
+            'puan': 3,
+            'imkanlar': ['Dunya Kahveleri', 'Kekler', 'Pastalar'],
+            'koordinatlar': {
+                'enlem': '37.781885',
+                'boylam': '30.566034'
+            },
+            'saatler': [{
+                'gunler': 'Pazartesi-Cuma',
+                'acilis': '07:00',
+                'kapanis': '23:00',
+                'kapali': false
+            }, {
+                'gunler': 'Cumartesi',
+                'acilis': '09:00',
+                'kapanis': '22:00',
+                'kapali': false
+            }, {
+                'gunler': 'Pazar',
+                'kapali': true
+            }],
+            'yorumlar': [{
+                    'yorumYapan': 'Mehmet Can Hanaylı',
+                    'puan': 3,
+                    'tarih': '27.11.2020',
+                    'yorumMetni': 'Kahveler lezzetli.'
+                },
+                {
+                    'yorumYapan': 'Arif Kursavar',
+                    'puan': 4,
+                    'tarih': '27.12.2021',
+                    'yorumMetni': 'Hizmet kalitesi seviyesi iyi, pastalar çok güzel...'
+                }
+            ]
+        }
+    });
+} */
 
 module.exports.admin = function(req, res, next) {
     res.render('admin', { title: 'Admin' });
