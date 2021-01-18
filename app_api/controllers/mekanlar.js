@@ -1,9 +1,24 @@
+const { json } = require('express')
 var mongoose = require('mongoose')
 var Mekan = mongoose.model('mekan')
 const cevapOlustur = function(res, status, content) {
     res
         .status(status)
         .json(content)
+
+}
+
+const tumMekanlariListele = async(req, res) => {
+
+    mekanlar = Mekan.find({}).exec(function(hata, mekanlar) {
+        if (!mekanlar) {
+            cevapOlustur(res, 404, { "durum": "Hiç Mekan Yok" });
+            return;
+        } else if (hata) {
+            cevapOlustur(res, 404, hata);
+        }
+        cevapOlustur(res, 200, mekanlar);
+    });
 
 }
 
@@ -162,5 +177,6 @@ module.exports = {
     mekanEkle,
     mekanGetir,
     mekanSil,
-    mekanGuncelle
+    mekanGuncelle,
+    tumMekanlariListele
 }

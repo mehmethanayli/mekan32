@@ -61,7 +61,7 @@ var anaSayfaOlustur = function(req, res, cevap, mekanListesi) {
     }
     res.render('mekanlar-liste', {
         'baslik': 'Mekan32 | Anasayfa',
-        'footer': 'Mehmet Hanaylı - Web Programlama 2020',
+        'footer': footer,
         'sayfaBaslik': {
             'siteAd': 'Mekan 32',
             'aciklama': 'Isparta Civarındaki Mekanları Keşfedin!'
@@ -197,11 +197,53 @@ const yorumumuEkle = function(req, res) {
     }
 }
 
+
+/* Çalışmalarım */
+const tumMekanlar = function(req, res) {
+    istekSecenekleri = {
+        url: apiSecenekleri.sunucu + 'api/admin',
+        method: "GET",
+        json: {}
+    };
+    request(istekSecenekleri, function(hata, cevap, mekanlar) {
+        var i, gelenMekanlar;
+        gelenMekanlar = mekanlar;
+        tumMekanlarAnaSayfaOlustur(req, res, cevap, gelenMekanlar);
+    });
+}
+
+/* Anasayfayı oluşturan metot. */
+var tumMekanlarAnaSayfaOlustur = function(req, res, cevap, mekanListesi) {
+        var mesaj;
+        if (!(mekanListesi instanceof Array)) {
+            mesaj = "Apı Hatası: Birşeyler Ters Gitti";
+            mekanListesi = [];
+        } else {
+            if (!mekanListesi.length) {
+                mesaj = "Kayıtlı Mekan Bulunamadı"
+            }
+        }
+        res.render('admin', {
+            'baslik': 'Mekan32 | Admin Sayfası',
+            'footer': footer,
+            'sayfaBaslik': {
+                'siteAd': 'MekanBul-Admin',
+                'aciklama': 'Mekanları Yönetin'
+            },
+            'mekanlar': mekanListesi,
+            mesaj: mesaj,
+            cevap: cevap,
+        });
+    }
+    /* Çalışmalarım */
+
+
 module.exports = {
     anaSayfa,
     mekanBilgisi,
     yorumEkle,
-    yorumumuEkle
+    yorumumuEkle,
+    tumMekanlar
 }
 
 
@@ -265,7 +307,3 @@ module.exports = {
         }
     });
 } */
-
-module.exports.admin = function(req, res, next) {
-    res.render('admin', { title: 'Admin' });
-};
